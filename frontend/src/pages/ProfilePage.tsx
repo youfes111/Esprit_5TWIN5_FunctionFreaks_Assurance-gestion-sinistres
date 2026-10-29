@@ -1,0 +1,15 @@
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../features/auth/AuthProvider';
+import {authApi} from '../services/auth';
+import {PageHeader} from '../components/PageHeader';
+import {Card} from '../components/ui/card';
+import {Input} from '../components/ui/input';
+import {Button} from '../components/ui/button';
+import {DataState} from '../components/DataState';
+export function ProfilePage(){
+  const auth=useAuth(),navigate=useNavigate();const [name,setName]=useState(auth.user?.fullName??''),[current,setCurrent]=useState(''),[password,setPassword]=useState(''),[confirm,setConfirm]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
+  async function save(event:React.FormEvent){event.preventDefault();if(busy)return;setBusy(true);setError('');setNotice('');try{auth.setUser(await authApi.profile(name));setNotice('Profil mis à jour.');}catch(error){setError((error as Error).message);}finally{setBusy(false);}}
+  async function change(event:React.FormEvent){event.preventDefault();if(busy)return;if(password!==confirm){setError('Les mots de passe ne correspondent pas.');return;}setBusy(true);setError('');try{await authApi.changePassword(current,password);setCurrent('');setPassword('');setConfirm('');auth.setUser(null);navigate('/login',{replace:true});}catch(error){setError((error as Error).message);}finally{setBusy(false);}}
+  return <div className="phase4-page"><PageHeader eyebrow="Compte personnel" title="Mon profil" description="Vos informations et la sécurité de votre compte."/><DataState error={error}/>{notice&&<p role="status">{notice}</p>}<div className="profile-grid"><Card className="detail-card"><h2>Informations personnelles</h2><p>{auth.user?.email} · {auth.user?.role}</p><form className="auth-form" onSubmit={event=>void save(event)}><label>Nom complet<Input required minLength={2} maxLength={120} value={name} onChange={event=>setName(event.target.value)}/></label><Button disabled={busy}>Enregistrer</Button></form><p className="data-caption">Le rôle et l’adresse email sont gérés par votre administrateur.</p></Card><Card className="detail-card"><h2>Changer mon mot de passe</h2><p className="data-caption">Toutes vos sessions seront révoquées après modification.</p><form className="auth-form" onSubmit={event=>void change(event)}><label>Mot de passe actuel<Input type="password" required maxLength={128} autoComplete="current-password" value={current} onChange={event=>setCurrent(event.target.value)}/></label><label>Nouveau mot de passe<Input type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={password} onChange={event=>setPassword(event.target.value)}/></label><label>Confirmer<Input type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={confirm} onChange={event=>setConfirm(event.target.value)}/></label><Button disabled={busy}>Changer le mot de passe</Button></form></Card></div></div>;
+}

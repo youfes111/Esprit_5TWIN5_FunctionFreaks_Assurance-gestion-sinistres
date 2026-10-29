@@ -1,0 +1,18 @@
+{
+  "name": "assurance-gestion-sinistres",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["frontend", "backend"],
+  "engines": { "node": ">=22.18.0", "npm": ">=10" },
+  "scripts": {
+    "dev": "concurrently --kill-others -n api,web -c cyan,green \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test:unit": "npm run test:unit --workspaces --if-present",
+    "auth:migrate": "npm run auth:migrate -w backend",
+    "auth:bootstrap-admin": "npm run auth:bootstrap-admin -w backend",
+    "auth:recover-admin": "npm run auth:recover-admin -w backend"
+  },
+  "devDependencies": { "concurrently": "^9.2.1", "typescript": "^5.9.3" }
+}

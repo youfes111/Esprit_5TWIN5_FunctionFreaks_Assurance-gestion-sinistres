@@ -1,0 +1,1 @@
+Initial loading remains isolated in `../services/ontology.service.ts`; it reads the original RDF/XML without editing it. Phase 1's Fuseki HTTP adapter and fixed templates live in `../sparql/`. Future shared vocabulary adapters can live here. No OWL reasoning is performed.

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.example.org/assurance#"
+         xml:base="http://www.example.org/assurance"
+         xmlns:assurance="http://www.example.org/assurance#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+  <owl:Ontology rdf:about="http://www.example.org/assurance">
+    <rdfs:label xml:lang="fr">Assurance &amp; Gestion des Sinistres</rdfs:label>
+  </owl:Ontology>
+
+  <!-- Requested date datatype; support by OWL DL reasoners may vary. -->
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+
+  <!-- Class hierarchy -->
+  <owl:Class rdf:about="#ChoseAssurance"/>
+
+  <owl:Class rdf:about="#Acteur">
+    <rdfs:subClassOf rdf:resource="#ChoseAssurance"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Assuré">
+    <rdfs:subClassOf rdf:resource="#Acteur"/>
+    <owl:disjointWith rdf:resource="#Expert"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Expert">
+    <rdfs:subClassOf rdf:resource="#Acteur"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Gestionnaire">
+    <rdfs:subClassOf rdf:resource="#Acteur"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Tiers">
+    <rdfs:subClassOf rdf:resource="#Acteur"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Produit">
+    <rdfs:subClassOf rdf:resource="#ChoseAssurance"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Contrat">
+    <rdfs:subClassOf rdf:resource="#Produit"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="#estSouscritPar"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+        <owl:onClass rdf:resource="#Assuré"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Garantie">
+    <rdfs:subClassOf rdf:resource="#Produit"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Prime">
+    <rdfs:subClassOf rdf:resource="#Produit"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Risque">
+    <rdfs:subClassOf rdf:resource="#Produit"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Sinistre">
+    <rdfs:subClassOf rdf:resource="#ChoseAssurance"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="#concerneContrat"/>
+        <owl:someValuesFrom rdf:resource="#Contrat"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Déclaration">
+    <rdfs:subClassOf rdf:resource="#Sinistre"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Dommage">
+    <rdfs:subClassOf rdf:resource="#Sinistre"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Preuve">
+    <rdfs:subClassOf rdf:resource="#Sinistre"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Expertise">
+    <rdfs:subClassOf rdf:resource="#Sinistre"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Règlement">
+    <rdfs:subClassOf rdf:resource="#ChoseAssurance"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Indemnité">
+    <rdfs:subClassOf rdf:resource="#Règlement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Paiement">
+    <rdfs:subClassOf rdf:resource="#Règlement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Décision">
+    <rdfs:subClassOf rdf:resource="#Règlement"/>
+  </owl:Class>
+
+  <!-- Object properties: only the seven specified domain/range pairs. -->
+  <owl:ObjectProperty rdf:about="#aSouscrit">
+    <rdfs:domain rdf:resource="#Assuré"/>
+    <rdfs:range rdf:resource="#Contrat"/>
+    <owl:inverseOf rdf:resource="#estSouscritPar"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#estSouscritPar"/>
+  <owl:ObjectProperty rdf:about="#couvreRisque">
+    <rdfs:domain rdf:resource="#Contrat"/>
+    <rdfs:range rdf:resource="#Risque"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#déclareSinistre">
+    <rdfs:domain rdf:resource="#Assuré"/>
+    <rdfs:range rdf:resource="#Sinistre"/>
+    <owl:inverseOf rdf:resource="#estDéclaréPar"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#estDéclaréPar"/>
+  <owl:ObjectProperty rdf:about="#concerneContrat">
+    <rdfs:domain rdf:resource="#Sinistre"/>
+    <rdfs:range rdf:resource="#Contrat"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#évaluéPar">
+    <rdfs:domain rdf:resource="#Sinistre"/>
+    <rdfs:range rdf:resource="#Expert"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#produitDommage">
+    <rdfs:domain rdf:resource="#Sinistre"/>
+    <rdfs:range rdf:resource="#Dommage"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#donneLieuÀ">
+    <rdfs:domain rdf:resource="#Sinistre"/>
+    <rdfs:range rdf:resource="#Indemnité"/>
+  </owl:ObjectProperty>
+
+  <!-- Data properties -->
+  <owl:DatatypeProperty rdf:about="#numéroContrat">
+    <rdfs:domain rdf:resource="#Contrat"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#dateDéclaration">
+    <rdfs:domain rdf:resource="#Sinistre"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#montantEstimé">
+    <rdfs:domain rdf:resource="#Dommage"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#statutSinistre">
+    <rdfs:domain rdf:resource="#Sinistre"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#estFrauduleux">
+    <rdfs:domain rdf:resource="#Sinistre"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+  </owl:DatatypeProperty>
+
+  <!-- Named individuals and assertions -->
+  <owl:NamedIndividual rdf:about="#Leila">
+    <rdf:type rdf:resource="#Assuré"/>
+    <assurance:déclareSinistre rdf:resource="#S2026_014"/>
+    <assurance:aSouscrit rdf:resource="#AUTO_882"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#S2026_014">
+    <rdf:type rdf:resource="#Sinistre"/>
+    <assurance:concerneContrat rdf:resource="#AUTO_882"/>
+    <assurance:évaluéPar rdf:resource="#Karim"/>
+    <assurance:produitDommage rdf:resource="#PareChoc"/>
+    <assurance:dateDéclaration rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-03-15</assurance:dateDéclaration>
+    <assurance:statutSinistre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">En cours</assurance:statutSinistre>
+    <assurance:estFrauduleux rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</assurance:estFrauduleux>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AUTO_882">
+    <rdf:type rdf:resource="#Contrat"/>
+    <assurance:numéroContrat rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AUTO_882</assurance:numéroContrat>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Karim">
+    <rdf:type rdf:resource="#Expert"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#PareChoc">
+    <rdf:type rdf:resource="#Dommage"/>
+    <assurance:montantEstimé rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1450.0</assurance:montantEstimé>
+  </owl:NamedIndividual>
+</rdf:RDF>
